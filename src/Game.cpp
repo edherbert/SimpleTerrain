@@ -30,11 +30,19 @@ Game::Game(){
     createCamera();
     workspace = setupCompositor();
 
-    Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
+    /*Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
     //Ogre::Item *item = sceneManager->createItem("Barrel2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     node->attachObject((Ogre::MovableObject*)item);
-    node->setScale(0.1, 0.1, 0.1);
+    node->setScale(0.1, 0.1, 0.1);*/
+
+    Ogre::MeshPtr staticMesh = createStaticMesh();
+
+    Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
+    Ogre::Item *item = sceneManager->createItem(staticMesh, Ogre::SCENE_STATIC);
+    node->attachObject((Ogre::MovableObject*)item);
+
+    //createStaticMesh();
 
     sceneManager->setForward3D( true, 4,4,5,96,3,200 );
 
@@ -117,4 +125,85 @@ Ogre::CompositorWorkspace* Game::setupCompositor(){
     }
 
     return compositorManager->addWorkspace(sceneManager, renderWindow, camera, workspaceName, true);
+}
+
+Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
+    Ogre::IndexBufferPacked *indexBuffer = 0;
+
+    const Ogre::uint16 c_indexData[3 * 2 * 6] =
+    {
+        0, 1, 2, 2, 3, 0, //Front face
+        6, 5, 4, 4, 7, 6, //Back face
+
+        3, 2, 6, 6, 7, 3, //Top face
+        5, 1, 0, 0, 4, 5, //Bottom face
+
+        4, 0, 3, 3, 7, 4, //Left face
+        6, 2, 1, 1, 5, 6, //Right face
+    };
+
+    Ogre::uint16 *cubeIndices = reinterpret_cast<Ogre::uint16*>( OGRE_MALLOC_SIMD(
+                                                                     sizeof(Ogre::uint16) * 3 * 2 * 6,
+                                                                     Ogre::MEMCATEGORY_GEOMETRY ) );
+    memcpy( cubeIndices, c_indexData, sizeof( c_indexData ) );
+
+    Ogre::RenderSystem *renderSystem = root->getRenderSystem();
+    Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
+
+    try
+    {
+        indexBuffer = vaoManager->createIndexBuffer( Ogre::IndexBufferPacked::IT_16BIT,
+                                                     3 * 2 * 6,
+                                                     Ogre::BT_IMMUTABLE,
+                                                     cubeIndices, true );
+    }
+    catch( Ogre::Exception &e )
+    {
+        // When keepAsShadow = true, the memory will be freed when the index buffer is destroyed.
+        // However if for some weird reason there is an exception raised, the memory will
+        // not be freed, so it is up to us to do so.
+        // The reasons for exceptions are very rare. But we're doing this for correctness.
+        OGRE_FREE_SIMD( indexBuffer, Ogre::MEMCATEGORY_GEOMETRY );
+        indexBuffer = 0;
+        throw e;
+    }
+
+    return indexBuffer;
+}
+
+Ogre::MeshPtr Game::createStaticMesh(){
+    Ogre::RenderSystem *renderSystem = root->getRenderSystem();
+    Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
+
+    Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual("A mesh", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    Ogre::SubMesh *subMesh = mesh->createSubMesh();
+
+    Ogre::VertexElement2Vec vertexElements;
+    vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION));
+    vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_NORMAL));
+
+    CubeVertices *cubeVertices = reinterpret_cast<CubeVertices*>( OGRE_MALLOC_SIMD(sizeof(CubeVertices) * 8, Ogre::MEMCATEGORY_GEOMETRY ) );
+
+    memcpy(cubeVertices, c_originalVertices, sizeof(CubeVertices) * 8);
+
+    Ogre::VertexBufferPacked *vertexBuffer = 0;
+    try{
+        vertexBuffer = vaoManager->createVertexBuffer(vertexElements, 8, Ogre::BT_DEFAULT, cubeVertices, true);
+    }catch(Ogre::Exception &e){
+        vertexBuffer = 0;
+        throw e;
+    }
+
+    Ogre::VertexBufferPackedVec vertexBuffers;
+    vertexBuffers.push_back(vertexBuffer);
+    Ogre::IndexBufferPacked *indexBuffer = createIndexBuffer();
+    Ogre::VertexArrayObject *vao = vaoManager->createVertexArrayObject(vertexBuffers, indexBuffer, Ogre::OT_TRIANGLE_LIST);
+
+    subMesh->mVao[Ogre::VpNormal].push_back(vao);
+    subMesh->mVao[Ogre::VpShadow].push_back(vao);
+
+    mesh->_setBounds( Ogre::Aabb( Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_SCALE ), false );
+    mesh->_setBoundingSphereRadius( 1.732f );
+
+    return mesh;
 }
