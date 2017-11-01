@@ -49,6 +49,8 @@ class Game
         Ogre::MeshPtr createStaticMesh();
         Ogre::IndexBufferPacked* createIndexBuffer(void);
 
+	//List the vertex data.
+	//This represents positions and normals.
         const CubeVertices c_originalVertices[8] =
         {
             CubeVertices( -1, -1,  1, -0.57737, -0.57737,  0.57737 ),
