@@ -51,17 +51,21 @@ class Game
 
 	//List the vertex data.
 	//This represents positions and normals.
-        const CubeVertices c_originalVertices[8] =
+        const CubeVertices c_originalVertices[4] =
         {
-            CubeVertices( -1, -1,  1, -0.57737, -0.57737,  0.57737 ),
-            CubeVertices(  1, -1,  1,  0.57737, -0.57737,  0.57737 ),
-            CubeVertices(  1,  1,  1,  0.57737,  0.57737,  0.57737 ),
-            CubeVertices( -1,  1,  1, -0.57737,  0.57737,  0.57737 ),
-            CubeVertices( -1, -1, -1, -0.57737, -0.57737, -0.57737 ),
-            CubeVertices(  1, -1, -1,  0.57737, -0.57737, -0.57737 ),
-            CubeVertices(  1,  1, -1,  0.57737,  0.57737, -0.57737 ),
-            CubeVertices( -1,  1, -1, -0.57737,  0.57737, -0.57737 )
+            //CubeVertices( -1, -1,  1, -0.57737, -0.57737,  0.57737 ),
+            //CubeVertices(  1, -1,  1,  0.57737, -0.57737,  0.57737 ),
+            //CubeVertices(  1,  1,  1,  0.57737,  0.57737,  0.57737 ),
+            //CubeVertices( -1,  1,  1, -0.57737,  0.57737,  0.57737 ),
+  
+            CubeVertices( -1, -1,  0, -0.57737,  0.57737,  0.57737 ),
+	    CubeVertices(1, -1, 0, 0.57737, -0.57737, 0.57737),
+	    CubeVertices(1, 1, 0, 0.5, 0.5, 0.5),
+	    CubeVertices(-1, 1, 0, 0.5, 0.5, 0.5)
         };
+	//Sooo... 
+	//Generating a flat mesh means four verticies on the side that are only used once, as well as the verticies on the side that are used twice.
+	//Other than that, all the other verticies will be used four times. 
 };
 
 #endif // GAME_H

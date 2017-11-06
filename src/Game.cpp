@@ -69,7 +69,7 @@ Game::Game(){
     int dist = 10;
 	while(!renderWindow->isClosed()){
         countt += 0.005f;
-        camera->setPosition(dist * cos(countt), dist / 8, dist * sin(countt));
+//        camera->setPosition(dist * cos(countt), dist / 8, dist * sin(countt));
         light2Node->setPosition(dist * cos(countt), 5, dist * sin(countt));
         camera->lookAt(0, 0, 0);
 		Ogre::WindowEventUtilities::messagePump();
@@ -103,7 +103,7 @@ void Game::createCamera(){
     camera = sceneManager->createCamera( "Main Camera" );
 
     // Position it at 500 in Z direction
-    camera->setPosition( Ogre::Vector3( 0, 5, 15 ) );
+    camera->setPosition( Ogre::Vector3( 0, 0, 15 ) );
     // Look back along -Z
     camera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
     camera->setNearClipDistance( 0.2f );
@@ -129,20 +129,13 @@ Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
 
     //A simple array containing index data.
     //There are three points in a triangle, and two triangles on each face of a cube. There are six faces on a cube.
-    const Ogre::uint16 c_indexData[3 * 2 * 6] =
+    const Ogre::uint16 c_indexData[3 * 2] =
     {
-        0, 1, 2, 2, 3, 0, //Front face
-        6, 5, 4, 4, 7, 6, //Back face
-
-        3, 2, 6, 6, 7, 3, //Top face
-        5, 1, 0, 0, 4, 5, //Bottom face
-
-        4, 0, 3, 3, 7, 4, //Left face
-        6, 2, 1, 1, 5, 6, //Right face
+        0, 1, 2, 2, 3, 0, //Single face 
     };
 
     Ogre::uint16 *cubeIndices = reinterpret_cast<Ogre::uint16*>( OGRE_MALLOC_SIMD(
-                                                                     sizeof(Ogre::uint16) * 3 * 2 * 6,
+                                                                     sizeof(Ogre::uint16) * 3 * 2,
                                                                      Ogre::MEMCATEGORY_GEOMETRY ) );
     //Copy the data into the vector.
     memcpy( cubeIndices, c_indexData, sizeof( c_indexData ) );
@@ -157,7 +150,7 @@ Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
 	//Also populate the index buffer with these values.
 	//This goes, type, number of indices, Buffer type, the actual data, keep as shadow
         indexBuffer = vaoManager->createIndexBuffer( Ogre::IndexBufferPacked::IT_16BIT,
-                                                     3 * 2 * 6,
+                                                     3 * 2,
                                                      Ogre::BT_IMMUTABLE,
                                                      cubeIndices, true );
     }
@@ -190,16 +183,16 @@ Ogre::MeshPtr Game::createStaticMesh(){
     vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_NORMAL));
 
     //Cube Verticies is a struct, and we have eight of them for the geometry.
-    CubeVertices *cubeVertices = reinterpret_cast<CubeVertices*>( OGRE_MALLOC_SIMD(sizeof(CubeVertices) * 8, Ogre::MEMCATEGORY_GEOMETRY ) );
+    CubeVertices *cubeVertices = reinterpret_cast<CubeVertices*>( OGRE_MALLOC_SIMD(sizeof(CubeVertices) * 4, Ogre::MEMCATEGORY_GEOMETRY ) );
 
     //Copy the verticies
-    memcpy(cubeVertices, c_originalVertices, sizeof(CubeVertices) * 8);
+    memcpy(cubeVertices, c_originalVertices, sizeof(CubeVertices) * 4);
 
     //Create a pointer to the buffer.
     Ogre::VertexBufferPacked *vertexBuffer = 0;
     try{
 	//So pass in the element details, the number of verticies, the buffer type, the actual vertex data and the shadow boolean
-        vertexBuffer = vaoManager->createVertexBuffer(vertexElements, 8, Ogre::BT_DEFAULT, cubeVertices, true);
+        vertexBuffer = vaoManager->createVertexBuffer(vertexElements, 4, Ogre::BT_DEFAULT, cubeVertices, true);
     }catch(Ogre::Exception &e){
         vertexBuffer = 0;
         throw e;
