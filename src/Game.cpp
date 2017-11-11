@@ -43,8 +43,7 @@ Game::Game(){
     Ogre::Item *item = sceneManager->createItem(staticMesh, Ogre::SCENE_STATIC);
     node->attachObject((Ogre::MovableObject*)item);*/
 
-    Terrain *terr = new Terrain(sceneManager, 2, 2);
-//    terr->createStaticMesh();
+    Terrain *terr = new Terrain(sceneManager, 5, 5);
 
     sceneManager->setForward3D( true, 4,4,5,96,3,200 );
 
@@ -137,7 +136,7 @@ Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
     //There are three points in a triangle, and two triangles on each face of a cube. There are six faces on a cube.
     const Ogre::uint16 c_indexData[3 * 2] =
     {
-        0, 1, 2, 2, 3, 0, //Single face 
+        0, 1, 2, 2, 3, 0, //Single face
     };
 
     Ogre::uint16 *cubeIndices = reinterpret_cast<Ogre::uint16*>( OGRE_MALLOC_SIMD(
@@ -177,12 +176,12 @@ Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
 /*Ogre::MeshPtr Game::createStaticMesh(){
     Ogre::RenderSystem *renderSystem = root->getRenderSystem();
     Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
-	
+
     //Create a mesh that will contain the vao things.
     Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual("A mesh", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     //Create a sub mesh
     Ogre::SubMesh *subMesh = mesh->createSubMesh();
-    
+
     //I think this describes how the elements will be spaced out.
     Ogre::VertexElement2Vec vertexElements;
     vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION));
