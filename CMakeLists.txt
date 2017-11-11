@@ -28,6 +28,7 @@ find_library(HLMS_PBS
 add_executable(ogre2
 src/Main.cpp
 src/Game.cpp
+src/Terrain.cpp
 )
 
 target_link_libraries(ogre2 ${OGRE_MAIN} ${HLMS_PBS})

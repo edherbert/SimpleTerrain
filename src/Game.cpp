@@ -1,11 +1,13 @@
 #include "Game.h"
 
+#include "Terrain.h"
+
 #include <iostream>
 
 Game::Game(){
 	root = new Ogre::Root("../setup/Plugins.cfg");
-	root->showConfigDialog();
-	//root->restoreConfig();
+	//root->showConfigDialog();
+    root->restoreConfig();
 
 	//root->addResourceLocation("/home/edward/Documents/ogre/Samples/Media/models", "FileSystem");
 	root->addResourceLocation("../media", "FileSystem");
@@ -34,12 +36,15 @@ Game::Game(){
 
 
     //This creates a pointer to a mesh
-    Ogre::MeshPtr staticMesh = createStaticMesh();
+    //Ogre::MeshPtr staticMesh = createStaticMesh();
 
     //Then just attach it to an item as normal.
-    Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
+    /*Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
     Ogre::Item *item = sceneManager->createItem(staticMesh, Ogre::SCENE_STATIC);
-    node->attachObject((Ogre::MovableObject*)item);
+    node->attachObject((Ogre::MovableObject*)item);*/
+
+    Terrain *terr = new Terrain(sceneManager, 2, 2);
+//    terr->createStaticMesh();
 
     sceneManager->setForward3D( true, 4,4,5,96,3,200 );
 
@@ -69,7 +74,7 @@ Game::Game(){
     int dist = 10;
 	while(!renderWindow->isClosed()){
         countt += 0.005f;
-//        camera->setPosition(dist * cos(countt), dist / 8, dist * sin(countt));
+        camera->setPosition(dist * cos(countt), dist / 8, dist * sin(countt));
         light2Node->setPosition(dist * cos(countt), 5, dist * sin(countt));
         camera->lookAt(0, 0, 0);
 		Ogre::WindowEventUtilities::messagePump();
@@ -103,7 +108,7 @@ void Game::createCamera(){
     camera = sceneManager->createCamera( "Main Camera" );
 
     // Position it at 500 in Z direction
-    camera->setPosition( Ogre::Vector3( 0, 0, 15 ) );
+    camera->setPosition( Ogre::Vector3( 0, 0, 50 ) );
     // Look back along -Z
     camera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
     camera->setNearClipDistance( 0.2f );
@@ -122,6 +127,7 @@ Ogre::CompositorWorkspace* Game::setupCompositor(){
     return compositorManager->addWorkspace(sceneManager, renderWindow, camera, workspaceName, true);
 }
 
+/*
 //Create the index buffer and return a pointer to it.
 Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
     //So create a nice pointer
@@ -167,8 +173,8 @@ Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
 
     return indexBuffer;
 }
-
-Ogre::MeshPtr Game::createStaticMesh(){
+*/
+/*Ogre::MeshPtr Game::createStaticMesh(){
     Ogre::RenderSystem *renderSystem = root->getRenderSystem();
     Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
 	
@@ -211,3 +217,4 @@ Ogre::MeshPtr Game::createStaticMesh(){
 
     return mesh;
 }
+*/
