@@ -16,11 +16,6 @@ Ogre::IndexBufferPacked* Terrain::createIndexBuffer(void){
     Ogre::IndexBufferPacked *indexBuffer = 0;
 
     int arraySize = 6 * width * height;
-/*    const Ogre::uint16 c_indexData[arraySize] =
-    {
-        0, 1, 2, 2, 3, 0, //Single face
-
-    };*/
 
     Ogre::uint16 c_indexData[arraySize];
 
@@ -31,25 +26,15 @@ Ogre::IndexBufferPacked* Terrain::createIndexBuffer(void){
     int currentStart = 0;
     for(int y = 0; y < height; y++){
         for(int x = 0; x < width; x++){
-            //Each cube will add 6 values to the array.
-            //No start value can be the same as another.
-            //int start = (x * 6) + (y * (width - 1) * 6);
-
-            std::cout << "Starting value: " << currentStart << std::endl;
-
-            c_indexData[currentStart] = x + y * (width + 1);
-            c_indexData[currentStart + 1] = 1 + x + y * (width + 1);
+            c_indexData[currentStart + 0] = x + y * (width + 1);
+            c_indexData[currentStart + 1] = x + (y + 1) * (width + 1);
             c_indexData[currentStart + 2] = 1 + x + (y + 1) * (width + 1);
             c_indexData[currentStart + 3] = 1 + x + (y + 1) * (width + 1);
-            c_indexData[currentStart + 4] = x + (y + 1) * (width + 1);
-            c_indexData[currentStart + 5] = x + (y + 0) * (width + 1);
+            c_indexData[currentStart + 4] = 1 + x + y * (width + 1);
+            c_indexData[currentStart + 5] = x + y * (width + 1);
 
             currentStart += 6;
         }
-    }
-
-    for(int i = 0; i < sizeof(c_indexData) / sizeof(Ogre::uint16); i++){
-        std::cout << "Indice" << i << ": " << c_indexData[i] << std::endl;
     }
 
     Ogre::uint16 *cubeIndices = reinterpret_cast<Ogre::uint16*>( OGRE_MALLOC_SIMD(sizeof(Ogre::uint16) * arraySize, Ogre::MEMCATEGORY_GEOMETRY));
@@ -92,30 +77,23 @@ Ogre::MeshPtr Terrain::createStaticMesh(){
 
     CubeVertices *cubeVertices = reinterpret_cast<CubeVertices*>( OGRE_MALLOC_SIMD(sizeof(CubeVertices) * count, Ogre::MEMCATEGORY_GEOMETRY ) );
 
-    //Fill the array with verticies.
-    /*for(int y = 0; y < height; y++){
-        for(int x = 0; x < width; x++){
-            std::cout << "x: " << x << " y: " << y << std::endl;
-            //c_originalVertices[x + y * width] = CubeVertices(x, y, 1, 0.5, 0.5, 0.5);
-        }
-    }*/
-
+    //Put the vertices in. Just walk through the grid adding them.
     int arrayCount = 0;
     for(int y = 0; y < height + 1; y++){
         for(int x = 0; x < width + 1; x++){
-            std::cout << "x: " << x << " y: " << y << std::endl;
-            c_originalVertices[arrayCount] = CubeVertices(x, y, 0, 0.5, 0.5, 0.5);
+            float value = (rand() % 100) * 0.01;
+            std::cout << value << std::endl;
+
+            c_originalVertices[arrayCount] = CubeVertices(x, value, y, 0.5, 0.5, 0.5);
+            //c_originalVertices[arrayCount] = CubeVertices(x, 0, y, 0.5, 0.5, 0.5);
             arrayCount++;
         }
     }
-    std::cout << "Total values pushed " << arrayCount << std::endl;
 
-//    memcpy(cubeVertices, c_originalVertices, sizeof(CubeVertices) * 4);
     memcpy(cubeVertices, c_originalVertices, sizeof(CubeVertices) * count);
 
     Ogre::VertexBufferPacked *vertexBuffer = 0;
     try{
-        //Try checking the parameters to see if the correct stride and things is being fed in here.
         vertexBuffer = vaoManager->createVertexBuffer(vertexElements, count, Ogre::BT_DEFAULT, cubeVertices, true);
     }catch(Ogre::Exception &e){
         vertexBuffer = 0;

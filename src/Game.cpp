@@ -17,8 +17,6 @@ Game::Game(){
 
 	renderWindow = root->createRenderWindow("A window", 900, 800, false, 0);
 
-    //All classes need a workspace, whatever that is
-
     registerHlms();
 
     //Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -28,26 +26,10 @@ Game::Game(){
     createCamera();
     workspace = setupCompositor();
 
-    /*Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
-    //Ogre::Item *item = sceneManager->createItem("Barrel2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
-    Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
-    node->attachObject((Ogre::MovableObject*)item);
-    node->setScale(0.1, 0.1, 0.1);*/
-
-
-    //This creates a pointer to a mesh
-    //Ogre::MeshPtr staticMesh = createStaticMesh();
-
-    //Then just attach it to an item as normal.
-    /*Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
-    Ogre::Item *item = sceneManager->createItem(staticMesh, Ogre::SCENE_STATIC);
-    node->attachObject((Ogre::MovableObject*)item);*/
-
-    Terrain *terr = new Terrain(sceneManager, 5, 5);
+    Terrain *terr = new Terrain(sceneManager, 20, 20);
 
     sceneManager->setForward3D( true, 4,4,5,96,3,200 );
 
-    //sceneManager->setAmbientLight( Ogre::ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f, Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f, Ogre::Vector3::UNIT_Y );
     sceneManager->setAmbientLight( Ogre::ColourValue( 0.33f, 0.61f, 0.98f ) * 0.1f, Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
 
     Ogre::Light *directionLight = sceneManager->createLight();
@@ -69,13 +51,7 @@ Game::Game(){
     light2Node->setPosition(0,3,8);
 
     //Put the ogre head in as well
-    float countt = 0.0f;
-    int dist = 10;
 	while(!renderWindow->isClosed()){
-        countt += 0.005f;
-        camera->setPosition(dist * cos(countt), dist / 8, dist * sin(countt));
-        light2Node->setPosition(dist * cos(countt), 5, dist * sin(countt));
-        camera->lookAt(0, 0, 0);
 		Ogre::WindowEventUtilities::messagePump();
 		root->renderOneFrame();
 	}

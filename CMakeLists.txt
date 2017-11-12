@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.9)
-project (ogre2)
+project (terrain)
 
 set(OGRE_ROOT_DIR /home/edward/Documents/ogre)
 set(OGRE_MAIN_INCLUDE ${OGRE_ROOT_DIR}/OgreMain/include)
@@ -25,10 +25,10 @@ find_library(HLMS_PBS
 	HINTS "${OGRE_LIBS}"
 )
 
-add_executable(ogre2
+add_executable(terrain
 src/Main.cpp
 src/Game.cpp
 src/Terrain.cpp
 )
 
-target_link_libraries(ogre2 ${OGRE_MAIN} ${HLMS_PBS})
+target_link_libraries(terrain ${OGRE_MAIN} ${HLMS_PBS} boost_system)
