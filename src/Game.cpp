@@ -2,6 +2,8 @@
 
 #include "Terrain.h"
 
+#include <SDL.h>
+
 #include <iostream>
 
 Game::Game(){
@@ -15,7 +17,29 @@ Game::Game(){
     root->getRenderSystem()->setConfigOption( "sRGB Gamma Conversion", "Yes" );
 	root->initialise(false);
 
-	renderWindow = root->createRenderWindow("A window", 900, 800, false, 0);
+    //Do all the SDL things here.
+    SDL_Surface *surface = 0;
+
+    if(SDL_Init(SDL_INIT_VIDEO) < 0){
+        
+    }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    window = SDL_CreateWindow("Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+
+    SDL_GLContext context = SDL_GL_CreateContext(window);
+    SDL_GL_MakeCurrent(window, context);
+
+    //Create the OGRE window reference here, but don't actually create the window
+    Ogre::NameValuePairList params;
+    params["currentGLContext"] = "true";
+    renderWindow = root->createRenderWindow("Window", 100, 100, false, &params);
+
+
+	//renderWindow = root->createRenderWindow("A window", 900, 800, false, 0);
 
     registerHlms();
 
@@ -50,9 +74,24 @@ Game::Game(){
     light2->setAttenuationBasedOnRadius( 100, 0.00192f );
     light2Node->setPosition(0,3,8);
 
+    SDL_Event event;
+
+    bool running = true;
     //Put the ogre head in as well
-	while(!renderWindow->isClosed()){
+	while(running){
 		Ogre::WindowEventUtilities::messagePump();
+
+        SDL_UpdateWindowSurface(window);
+        SDL_GL_SwapWindow(window);
+        SDL_WaitEvent(&event);
+
+        switch(event.type){
+            case SDL_QUIT:
+                closeWindow();                
+                running = false;
+                break;
+        }
+
 		root->renderOneFrame();
 	}
 }
@@ -102,94 +141,10 @@ Ogre::CompositorWorkspace* Game::setupCompositor(){
     return compositorManager->addWorkspace(sceneManager, renderWindow, camera, workspaceName, true);
 }
 
-/*
-//Create the index buffer and return a pointer to it.
-Ogre::IndexBufferPacked* Game::createIndexBuffer(void){
-    //So create a nice pointer
-    Ogre::IndexBufferPacked *indexBuffer = 0;
+void Game::closeWindow(){
+    std::cout << "Closing window" << std::endl;
 
-    //A simple array containing index data.
-    //There are three points in a triangle, and two triangles on each face of a cube. There are six faces on a cube.
-    const Ogre::uint16 c_indexData[3 * 2] =
-    {
-        0, 1, 2, 2, 3, 0, //Single face
-    };
-
-    Ogre::uint16 *cubeIndices = reinterpret_cast<Ogre::uint16*>( OGRE_MALLOC_SIMD(
-                                                                     sizeof(Ogre::uint16) * 3 * 2,
-                                                                     Ogre::MEMCATEGORY_GEOMETRY ) );
-    //Copy the data into the vector.
-    memcpy( cubeIndices, c_indexData, sizeof( c_indexData ) );
-
-    //Get the vao manager.
-    Ogre::RenderSystem *renderSystem = root->getRenderSystem();
-    Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
-
-    try
-    {
-	//Actually create an index buffer and assign it to the pointer created earlier.
-	//Also populate the index buffer with these values.
-	//This goes, type, number of indices, Buffer type, the actual data, keep as shadow
-        indexBuffer = vaoManager->createIndexBuffer( Ogre::IndexBufferPacked::IT_16BIT,
-                                                     3 * 2,
-                                                     Ogre::BT_IMMUTABLE,
-                                                     cubeIndices, true );
-    }
-    catch( Ogre::Exception &e )
-    {
-        // When keepAsShadow = true, the memory will be freed when the index buffer is destroyed.
-        // However if for some weird reason there is an exception raised, the memory will
-        // not be freed, so it is up to us to do so.
-        // The reasons for exceptions are very rare. But we're doing this for correctness.
-        OGRE_FREE_SIMD( indexBuffer, Ogre::MEMCATEGORY_GEOMETRY );
-        indexBuffer = 0;
-        throw e;
-    }
-
-    return indexBuffer;
+    renderWindow->destroy();
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }
-*/
-/*Ogre::MeshPtr Game::createStaticMesh(){
-    Ogre::RenderSystem *renderSystem = root->getRenderSystem();
-    Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
-
-    //Create a mesh that will contain the vao things.
-    Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual("A mesh", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    //Create a sub mesh
-    Ogre::SubMesh *subMesh = mesh->createSubMesh();
-
-    //I think this describes how the elements will be spaced out.
-    Ogre::VertexElement2Vec vertexElements;
-    vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION));
-    vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_NORMAL));
-
-    //Cube Verticies is a struct, and we have eight of them for the geometry.
-    CubeVertices *cubeVertices = reinterpret_cast<CubeVertices*>( OGRE_MALLOC_SIMD(sizeof(CubeVertices) * 4, Ogre::MEMCATEGORY_GEOMETRY ) );
-
-    //Copy the verticies
-    memcpy(cubeVertices, c_originalVertices, sizeof(CubeVertices) * 4);
-
-    //Create a pointer to the buffer.
-    Ogre::VertexBufferPacked *vertexBuffer = 0;
-    try{
-	//So pass in the element details, the number of verticies, the buffer type, the actual vertex data and the shadow boolean
-        vertexBuffer = vaoManager->createVertexBuffer(vertexElements, 4, Ogre::BT_DEFAULT, cubeVertices, true);
-    }catch(Ogre::Exception &e){
-        vertexBuffer = 0;
-        throw e;
-    }
-
-    Ogre::VertexBufferPackedVec vertexBuffers;
-    vertexBuffers.push_back(vertexBuffer);
-    Ogre::IndexBufferPacked *indexBuffer = createIndexBuffer();
-    Ogre::VertexArrayObject *vao = vaoManager->createVertexArrayObject(vertexBuffers, indexBuffer, Ogre::OT_TRIANGLE_LIST);
-
-    subMesh->mVao[Ogre::VpNormal].push_back(vao);
-    subMesh->mVao[Ogre::VpShadow].push_back(vao);
-
-    mesh->_setBounds( Ogre::Aabb( Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_SCALE ), false );
-    mesh->_setBoundingSphereRadius( 1.732f );
-
-    return mesh;
-}
-*/

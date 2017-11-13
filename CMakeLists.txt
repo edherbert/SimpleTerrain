@@ -15,6 +15,8 @@ include_directories(${OGRE_BUILD_SETTINGS_INCLUDE})
 include_directories(${OGRE_PBS_INCLUDE})
 include_directories(${OGRE_HLMS_COMMON_INCLUDE})
 
+include_directories("/usr/include/SDL2")
+
 find_library(OGRE_MAIN
 	NAMES OgreMain
 	HINTS "${OGRE_LIBS}"
@@ -31,4 +33,4 @@ src/Game.cpp
 src/Terrain.cpp
 )
 
-target_link_libraries(terrain ${OGRE_MAIN} ${HLMS_PBS} boost_system)
+target_link_libraries(terrain ${OGRE_MAIN} ${HLMS_PBS} boost_system SDL2)
