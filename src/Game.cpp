@@ -78,19 +78,44 @@ Game::Game(){
 
     bool running = true;
     //Put the ogre head in as well
+    int camX, camY, camZ;
+    camX = camY = camZ = 0;
+
+    int prevX, prevY;
+    int offsetX, offsetY;
 	while(running){
 		Ogre::WindowEventUtilities::messagePump();
 
         SDL_UpdateWindowSurface(window);
         SDL_GL_SwapWindow(window);
         SDL_WaitEvent(&event);
+        SDL_PumpEvents();
 
         switch(event.type){
             case SDL_QUIT:
-                closeWindow();                
+                closeWindow(); 
                 running = false;
                 break;
         }
+        /*switch(event.key.keysym.sym){
+            case SDLK_LEFT:
+                
+            case SDLK_RIGHT:
+
+            case SDLK_UP:
+
+            case SDLK_DOWN:
+        }*/
+        int currentX, currentY;
+        SDL_GetMouseState(&currentX, &currentY);
+
+        int offsetX = currentX - prevX;
+        int offsetY = currentY - prevY;
+    
+        pointCamera(offsetX, offsetY);
+
+        prevX = currentX;
+        prevY = currentY;
 
 		root->renderOneFrame();
 	}
@@ -128,6 +153,36 @@ void Game::createCamera(){
     camera->setNearClipDistance( 0.2f );
     camera->setFarClipDistance( 1000.0f );
     camera->setAutoAspectRatio( true );
+}
+
+void Game::pointCamera(int xOffset, int yOffset){
+    float sense = 0.05;
+    float xCamera = xOffset;
+    float yCamera = yOffset;
+    //xOffset *= sense;
+    //yOffset *= sense;
+    xCamera *= sense;
+    yCamera *= sense;
+
+    yaw += xCamera;
+    pitch += yCamera;
+    if(pitch > 89.0f) pitch = 89.0f;
+    if(pitch < -89.0f) pitch = -89.0f;
+
+    Ogre::Vector3 front;
+    front.x = cos(radians(yaw)) * cos(radians(pitch));
+    front.y = sin(radians(pitch));
+    front.z = sin(radians(yaw)) * cos(radians(pitch));
+
+    //Normalise the camera front
+    float length = sqrt((front.x * front.x) + (front.y * front.y) + (front.z * front.z));
+    Ogre::Vector3 cameraFront = Ogre::Vector3(front.x / length, front.y / length, front.z / length);
+
+    camera->setDirection(cameraFront);
+}
+
+float Game::radians(float value){
+    return value * (M_PI / 180);
 }
 
 Ogre::CompositorWorkspace* Game::setupCompositor(){

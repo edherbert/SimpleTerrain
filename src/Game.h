@@ -30,10 +30,17 @@ class Game
 
         Ogre::CompositorWorkspace *workspace;
 
+        Ogre::Real yaw;
+        Ogre::Real pitch;
+
         void registerHlms();
         void createSceneManager();
         void createCamera();
         void closeWindow();
+        void pointCamera(int xOffset, int yOffset);
+
+        float radians(float value);
+
         Ogre::CompositorWorkspace* setupCompositor();
 
         Ogre::MeshPtr createStaticMesh();
