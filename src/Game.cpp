@@ -52,6 +52,14 @@ Game::Game(){
 
     Terrain *terr = new Terrain(sceneManager, 20, 20);
 
+
+    Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
+    //Ogre::Item *item = sceneManager->createItem("Barrel2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
+    Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
+    node->attachObject((Ogre::MovableObject*)item);
+    node->setScale(0.1, 0.1, 0.1);
+
+
     sceneManager->setForward3D( true, 4,4,5,96,3,200 );
 
     sceneManager->setAmbientLight( Ogre::ColourValue( 0.33f, 0.61f, 0.98f ) * 0.1f, Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
@@ -77,9 +85,11 @@ Game::Game(){
     SDL_Event event;
 
     bool running = true;
-    //Put the ogre head in as well
+
     int camX, camY, camZ;
     camX = camY = camZ = 0;
+
+    camera->setDirection(Ogre::Vector3(0, 0, -1));
 
     int prevX, prevY;
     int offsetX, offsetY;
@@ -91,21 +101,28 @@ Game::Game(){
         SDL_WaitEvent(&event);
         SDL_PumpEvents();
 
-        switch(event.type){
+        /*switch(event.type){
             case SDL_QUIT:
                 closeWindow(); 
                 running = false;
                 break;
-        }
-        /*switch(event.key.keysym.sym){
-            case SDLK_LEFT:
+        }*/
+        switch(event.key.keysym.sym){
+        /*    case SDLK_LEFT:
                 
             case SDLK_RIGHT:
 
             case SDLK_UP:
 
-            case SDLK_DOWN:
-        }*/
+            case SDLK_DOWN:*/
+            case SDLK_ESCAPE:
+                closeWindow();
+                running = false;
+                break;
+            case SDLK_i:
+                captureMouse();
+                break;
+        }
         int currentX, currentY;
         SDL_GetMouseState(&currentX, &currentY);
 
@@ -178,7 +195,11 @@ void Game::pointCamera(int xOffset, int yOffset){
     float length = sqrt((front.x * front.x) + (front.y * front.y) + (front.z * front.z));
     Ogre::Vector3 cameraFront = Ogre::Vector3(front.x / length, front.y / length, front.z / length);
 
+    //std::cout << xCamera << std::endl;
+
     camera->setDirection(cameraFront);
+
+    std::cout << camera->getDirection() << std::endl;
 }
 
 float Game::radians(float value){
@@ -203,3 +224,11 @@ void Game::closeWindow(){
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
+
+void Game::captureMouse(){
+    std::cout << "Capturing Mouse" << std::endl;
+    mouseCaptured = !mouseCaptured;
+    //SDL_CaptureMouse((SDL_bool)mouseCaptured);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+}
+

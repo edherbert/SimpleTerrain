@@ -33,6 +33,10 @@ class Game
         Ogre::Real yaw;
         Ogre::Real pitch;
 
+        void captureMouse();
+
+        bool mouseCaptured = false;
+
         void registerHlms();
         void createSceneManager();
         void createCamera();
