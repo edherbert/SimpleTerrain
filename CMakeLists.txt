@@ -31,6 +31,7 @@ add_executable(terrain
 src/Main.cpp
 src/Game.cpp
 src/Terrain.cpp
+src/Window.cpp
 )
 
 target_link_libraries(terrain ${OGRE_MAIN} ${HLMS_PBS} boost_system SDL2)

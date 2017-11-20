@@ -10,6 +10,8 @@
 #include <OgreMesh2.h>
 #include "OgreSubMesh2.h"
 
+class Window;
+
 class SDL_Window;
 
 class Game
@@ -22,11 +24,10 @@ class Game
 
     private:
         Ogre::Root *root;
-        Ogre::RenderWindow *renderWindow;
         Ogre::SceneManager *sceneManager;
         Ogre::Camera *camera;
-
-        SDL_Window *window;
+        
+        Window *window;
 
         Ogre::CompositorWorkspace *workspace;
 
@@ -40,7 +41,6 @@ class Game
         void registerHlms();
         void createSceneManager();
         void createCamera();
-        void closeWindow();
         void pointCamera(int xOffset, int yOffset);
 
         float radians(float value);

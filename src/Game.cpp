@@ -1,8 +1,7 @@
 #include "Game.h"
 
 #include "Terrain.h"
-
-#include <SDL.h>
+#include "Window.h"
 
 #include <iostream>
 
@@ -17,29 +16,8 @@ Game::Game(){
     root->getRenderSystem()->setConfigOption( "sRGB Gamma Conversion", "Yes" );
 	root->initialise(false);
 
-    //Do all the SDL things here.
-    SDL_Surface *surface = 0;
 
-    if(SDL_Init(SDL_INIT_VIDEO) < 0){
-        
-    }
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    window = SDL_CreateWindow("Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-
-    SDL_GLContext context = SDL_GL_CreateContext(window);
-    SDL_GL_MakeCurrent(window, context);
-
-    //Create the OGRE window reference here, but don't actually create the window
-    Ogre::NameValuePairList params;
-    params["currentGLContext"] = "true";
-    renderWindow = root->createRenderWindow("Window", 100, 100, false, &params);
-
-
-	//renderWindow = root->createRenderWindow("A window", 900, 800, false, 0);
+    window = new Window();
 
     registerHlms();
 
@@ -82,57 +60,10 @@ Game::Game(){
     light2->setAttenuationBasedOnRadius( 100, 0.00192f );
     light2Node->setPosition(0,3,8);
 
-    SDL_Event event;
-
     bool running = true;
 
-    int camX, camY, camZ;
-    camX = camY = camZ = 0;
-
-    camera->setDirection(Ogre::Vector3(0, 0, -1));
-
-    int prevX, prevY;
-    int offsetX, offsetY;
 	while(running){
-		Ogre::WindowEventUtilities::messagePump();
-
-        SDL_UpdateWindowSurface(window);
-        SDL_GL_SwapWindow(window);
-        SDL_WaitEvent(&event);
-        SDL_PumpEvents();
-
-        /*switch(event.type){
-            case SDL_QUIT:
-                closeWindow(); 
-                running = false;
-                break;
-        }*/
-        switch(event.key.keysym.sym){
-        /*    case SDLK_LEFT:
-                
-            case SDLK_RIGHT:
-
-            case SDLK_UP:
-
-            case SDLK_DOWN:*/
-            case SDLK_ESCAPE:
-                closeWindow();
-                running = false;
-                break;
-            case SDLK_i:
-                captureMouse();
-                break;
-        }
-        int currentX, currentY;
-        SDL_GetMouseState(&currentX, &currentY);
-
-        int offsetX = currentX - prevX;
-        int offsetY = currentY - prevY;
-    
-        pointCamera(offsetX, offsetY);
-
-        prevX = currentX;
-        prevY = currentY;
+	    window->update();
 
 		root->renderOneFrame();
 	}
@@ -214,21 +145,12 @@ Ogre::CompositorWorkspace* Game::setupCompositor(){
         compositorManager->createBasicWorkspaceDef(workspaceName, Ogre::ColourValue(0, 0, 0, 1), Ogre::IdString());
     }
 
-    return compositorManager->addWorkspace(sceneManager, renderWindow, camera, workspaceName, true);
-}
-
-void Game::closeWindow(){
-    std::cout << "Closing window" << std::endl;
-
-    renderWindow->destroy();
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    return compositorManager->addWorkspace(sceneManager, window->getRenderWindow(), camera, workspaceName, true);
 }
 
 void Game::captureMouse(){
     std::cout << "Capturing Mouse" << std::endl;
     mouseCaptured = !mouseCaptured;
-    //SDL_CaptureMouse((SDL_bool)mouseCaptured);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-}
 
+    //SDL_SetRelativeMouseMode(SDL_TRUE);
+}
