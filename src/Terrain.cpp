@@ -6,10 +6,18 @@ Terrain::Terrain(Ogre::SceneManager *sceneManager, int width, int height) :
     sceneManager(sceneManager){
 
     Ogre::MeshPtr staticMesh = createStaticMesh();
+
+
     node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
     Ogre::Item *item = sceneManager->createItem(staticMesh, Ogre::SCENE_STATIC);
     //Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     node->attachObject((Ogre::MovableObject*)item);
+
+   
+
+ 
+    item->setDatablock("pbs/aluminium");
+    //item->setMaterial("test");
 }
 
 Ogre::IndexBufferPacked* Terrain::createIndexBuffer(void){

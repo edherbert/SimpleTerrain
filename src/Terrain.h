@@ -8,6 +8,7 @@
 
 #include <OgreMeshManager2.h>
 #include <OgreMesh2.h>
+#include <OgreItem.h>
 #include "OgreSubMesh2.h"
 
 #include <iostream>

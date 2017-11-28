@@ -34,7 +34,7 @@ Game::Game(){
     Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
     //Ogre::Item *item = sceneManager->createItem("Barrel2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
-    node->attachObject((Ogre::MovableObject*)item);
+    //node->attachObject((Ogre::MovableObject*)item);
     node->setScale(0.1, 0.1, 0.1);
 
 
@@ -95,7 +95,8 @@ void Game::createCamera(){
     camera = sceneManager->createCamera( "Main Camera" );
 
     // Position it at 500 in Z direction
-    camera->setPosition( Ogre::Vector3( 0, 0, 50 ) );
+    //camera->setPosition( Ogre::Vector3( 0, 0, 50 ) );
+    camera->setPosition( Ogre::Vector3( 0, 50, 50 ) );
     // Look back along -Z
     camera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
     camera->setNearClipDistance( 0.2f );
