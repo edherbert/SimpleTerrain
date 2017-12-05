@@ -13,11 +13,7 @@ Terrain::Terrain(Ogre::SceneManager *sceneManager, int width, int height) :
     //Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     node->attachObject((Ogre::MovableObject*)item);
 
-   
-
- 
-    item->setDatablock("pbs/aluminium");
-    //item->setMaterial("test");
+    item->setDatablock("terrain");
 }
 
 Ogre::IndexBufferPacked* Terrain::createIndexBuffer(void){
@@ -78,6 +74,7 @@ Ogre::MeshPtr Terrain::createStaticMesh(){
     Ogre::VertexElement2Vec vertexElements;
     vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION));
     vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_NORMAL));
+    vertexElements.push_back(Ogre::VertexElement2(Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES));
 
     //Create the verticies array but don't put anything in it.
     int count = (width + 1) * (height + 1);
@@ -92,7 +89,7 @@ Ogre::MeshPtr Terrain::createStaticMesh(){
             float value = (rand() % 100) * 0.01;
             //std::cout << value << std::endl;
 
-            c_originalVertices[arrayCount] = CubeVertices(x, value, y, 0.5, 0.5, 0.5);
+            c_originalVertices[arrayCount] = CubeVertices(x, value, y, 0.5, 0.5, 0.5, x * width, y * height);
             //c_originalVertices[arrayCount] = CubeVertices(x, 0, y, 0.5, 0.5, 0.5);
             arrayCount++;
         }

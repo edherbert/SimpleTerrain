@@ -17,13 +17,16 @@ struct CubeVertices
 {
     float px, py, pz;   //Position
     float nx, ny, nz;   //Normals
+    float tx, ty;   //Texture coordinates
 
     CubeVertices() {}
     //Populate the floats with values.
     CubeVertices( float _px, float _py, float _pz,
-                  float _nx, float _ny, float _nz ) :
+                  float _nx, float _ny, float _nz,
+                  float _tx, float _ty ) :
         px( _px ), py( _py ), pz( _pz ),
-        nx( _nx ), ny( _ny ), nz( _nz )
+        nx( _nx ), ny( _ny ), nz( _nz ),
+        tx(_tx), ty(_ty)
     {
     }
 };

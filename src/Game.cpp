@@ -40,7 +40,8 @@ Game::Game(){
 
     sceneManager->setForward3D( true, 4,4,5,96,3,200 );
 
-    sceneManager->setAmbientLight( Ogre::ColourValue( 0.33f, 0.61f, 0.98f ) * 0.1f, Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
+    //sceneManager->setAmbientLight( Ogre::ColourValue( 0.33f, 0.61f, 0.98f ) * 1.0f, Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
+    sceneManager->setAmbientLight( Ogre::ColourValue( 1.0f, 1.0f, 1.0f ), Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
 
     Ogre::Light *directionLight = sceneManager->createLight();
     Ogre::SceneNode *lightNode = sceneManager->getRootSceneNode()->createChildSceneNode();
