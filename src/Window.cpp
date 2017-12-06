@@ -72,7 +72,5 @@ void Window::updateKeys(){
     if( currentKeyStates[ SDL_SCANCODE_UP ] ){
         std::cout << "Up" << std::endl;
     }
-
-    bool thing = currentKeyStates[ SDL_SCANCODE_UP ];
 }
 

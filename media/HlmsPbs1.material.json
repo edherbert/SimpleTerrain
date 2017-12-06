@@ -31,7 +31,7 @@
 	"pbs" : 
 	{
 
-		"HlmsPbs1" :
+		"terrain" :
 		{
 			"macroblock" : "Macroblock_0",
 			"blendblock" : "Blendblock_0",

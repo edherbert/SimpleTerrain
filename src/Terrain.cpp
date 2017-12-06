@@ -87,10 +87,9 @@ Ogre::MeshPtr Terrain::createStaticMesh(){
     for(int y = 0; y < height + 1; y++){
         for(int x = 0; x < width + 1; x++){
             float value = (rand() % 100) * 0.01;
-            //std::cout << value << std::endl;
 
-            c_originalVertices[arrayCount] = CubeVertices(x, value, y, 0.5, 0.5, 0.5, x * width, y * height);
-            //c_originalVertices[arrayCount] = CubeVertices(x, 0, y, 0.5, 0.5, 0.5);
+            //c_originalVertices[arrayCount] = CubeVertices(x, value, y, 0.5, 0.5, 0.5, x * width, y * height);
+            c_originalVertices[arrayCount] = CubeVertices(x, value, y, 1, 1, 1, x * width, y * height);
             arrayCount++;
         }
     }

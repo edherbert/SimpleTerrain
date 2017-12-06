@@ -28,20 +28,20 @@ Game::Game(){
     createCamera();
     workspace = setupCompositor();
 
-    Terrain *terr = new Terrain(sceneManager, 20, 20);
+    Terrain *terr = new Terrain(sceneManager, 100, 100);
 
 
     Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
     //Ogre::Item *item = sceneManager->createItem("Barrel2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
+    node->attachObject((Ogre::MovableObject*)item);
     //node->attachObject((Ogre::MovableObject*)item);
     node->setScale(0.1, 0.1, 0.1);
-
 
     sceneManager->setForward3D( true, 4,4,5,96,3,200 );
 
     //sceneManager->setAmbientLight( Ogre::ColourValue( 0.33f, 0.61f, 0.98f ) * 1.0f, Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
-    sceneManager->setAmbientLight( Ogre::ColourValue( 1.0f, 1.0f, 1.0f ), Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
+    sceneManager->setAmbientLight( Ogre::ColourValue( 0.3f, 0.3f, 0.3f ), Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.1f, Ogre::Vector3::UNIT_Y );
 
     Ogre::Light *directionLight = sceneManager->createLight();
     Ogre::SceneNode *lightNode = sceneManager->getRootSceneNode()->createChildSceneNode();
@@ -59,12 +59,19 @@ Game::Game(){
     light2->setCastShadows( false );
     light2->setType( Ogre::Light::LT_POINT );
     light2->setAttenuationBasedOnRadius( 100, 0.00192f );
-    light2Node->setPosition(0,3,8);
+    //light2Node->setPosition(0,3,8);
+    light2Node->setPosition(10,3,10);
 
     bool running = true;
 
+    double count = 0.0d;
 	while(running){
+        count += 0.001d;
+
 	    window->update();
+
+	    light2Node->setPosition(10 + count,3,10+count);
+	    //camera->setPosition(30 + count, 50, 30 + count);
 
 		root->renderOneFrame();
 	}
