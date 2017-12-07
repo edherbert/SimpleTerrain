@@ -27,13 +27,13 @@ Game::Game(){
     createCamera();
     workspace = setupCompositor();
 
-    Terrain *terr = new Terrain(sceneManager, 10, 10);
+    Terrain *terr = new Terrain(sceneManager, 100, 100);
 
 
     Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
     //Ogre::Item *item = sceneManager->createItem("Barrel2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
-    node->attachObject((Ogre::MovableObject*)item);
+    //node->attachObject((Ogre::MovableObject*)item);
     //node->attachObject((Ogre::MovableObject*)item);
     node->setScale(0.1, 0.1, 0.1);
 
@@ -61,17 +61,25 @@ Game::Game(){
     //light2Node->setPosition(0,3,8);
     light2Node->setPosition(10,3,10);
 
+    camera->setPosition(0, 50, 0);
+    //camera->lookAt(0, 0, 0);
+
     float x, y;
-    x = y = 10;
+    x = y = -0;
 	while(window->isOpen()){
 	    window->update();
 
-	    if(window->getKey(KEY_W))y -= 0.005;
-	    if(window->getKey(KEY_S))y += 0.005;
-	    if(window->getKey(KEY_A))x -= 0.005;
-	    if(window->getKey(KEY_D))x += 0.005;
+	    if(window->getKey(KEY_W))camera->move(camera->getDirection() * 0.01);
+	    if(window->getKey(KEY_S))camera->move(camera->getDirection() * -0.01);
+	    if(window->getKey(KEY_A))camera->move(camera->getRight() * -0.01);
+	    if(window->getKey(KEY_D))camera->move(camera->getRight() * 0.01);
 
-	    camera->setPosition(x, 30, y);
+	    if(window->getKey(KEY_F)) window->setMouseGrab(true);
+	    if(window->getKey(KEY_G)) window->setMouseGrab(false);
+
+	    if(window->getKey(KEY_ESC)) window->close();
+
+	    pointCamera(window->xOffset, window->yOffset);
 
 		root->renderOneFrame();
 	}
@@ -139,7 +147,10 @@ void Game::pointCamera(int xOffset, int yOffset){
 
     camera->setDirection(cameraFront);
 
-    std::cout << camera->getDirection() << std::endl;
+    window->xOffset = 0;
+    window->yOffset = 0;
+
+    //std::cout << camera->getDirection() << std::endl;
 }
 
 float Game::radians(float value){

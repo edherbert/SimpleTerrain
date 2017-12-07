@@ -9,6 +9,10 @@
 #define KEY_S SDL_SCANCODE_S
 #define KEY_D SDL_SCANCODE_D
 
+#define KEY_F SDL_SCANCODE_F
+#define KEY_G SDL_SCANCODE_G
+#define KEY_ESC SDL_SCANCODE_ESCAPE
+
 
 class Window{
 private:
@@ -17,6 +21,9 @@ private:
 
 	int width = 800;
 	int height = 600;
+
+	int mouseX = 0;
+	int mouseY = 0;
 
     void updateMouse();
     void updateKeys();
@@ -28,8 +35,12 @@ private:
 	void keyPressed(SDL_Event &event);
 	void keyReleased(SDL_Event &event);
 	void resizeWindow(SDL_Event &event);
+	void warpToCentre();
+
+	void updateMouse(SDL_Event &event);
 
     bool open = false;
+	bool mouseGrab = false;
 
 	bool keys[300];
 
@@ -40,9 +51,12 @@ public:
 	void update();
 
 	bool getKey(int k);
+	void setMouseGrab(bool grab);
 
     void close();
     bool isOpen();
+
+	int xOffset, yOffset;
 
     Ogre::RenderWindow* getRenderWindow();
 };
