@@ -11,7 +11,7 @@
 			"depth_bias_constant" : 0,
 			"depth_bias_slope_scale" : 0,
 			"cull_mode" : "clockwise",
-			"polygon_mode" : "solid"
+			"polygon_mode" : "wireframe"
 		}
 	},
 

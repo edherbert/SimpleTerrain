@@ -13,6 +13,8 @@ Terrain::Terrain(Ogre::SceneManager *sceneManager, int width, int height) :
     //Ogre::Item *item = sceneManager->createItem("ogrehead2.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, Ogre::SCENE_STATIC);
     node->attachObject((Ogre::MovableObject*)item);
 
+    item->setLocalAabb(Ogre::Aabb(Ogre::Vector3(width / 2, 0, height / 2), Ogre::Vector3(width / 2, 100, height / 2)));
+
     item->setDatablock("terrain");
 }
 

@@ -16,7 +16,6 @@ Game::Game(){
     root->getRenderSystem()->setConfigOption( "sRGB Gamma Conversion", "Yes" );
 	root->initialise(false);
 
-
     window = new Window();
 
     registerHlms();
@@ -28,7 +27,7 @@ Game::Game(){
     createCamera();
     workspace = setupCompositor();
 
-    Terrain *terr = new Terrain(sceneManager, 100, 100);
+    Terrain *terr = new Terrain(sceneManager, 10, 10);
 
 
     Ogre::SceneNode *node = sceneManager->getRootSceneNode()->createChildSceneNode(Ogre::SCENE_STATIC);
@@ -62,16 +61,17 @@ Game::Game(){
     //light2Node->setPosition(0,3,8);
     light2Node->setPosition(10,3,10);
 
-    bool running = true;
-
-    double count = 0.0d;
-	while(running){
-        count += 0.001d;
-
+    float x, y;
+    x = y = 10;
+	while(window->isOpen()){
 	    window->update();
 
-	    light2Node->setPosition(10 + count,3,10+count);
-	    //camera->setPosition(30 + count, 50, 30 + count);
+	    if(window->getKey(KEY_W))y -= 0.005;
+	    if(window->getKey(KEY_S))y += 0.005;
+	    if(window->getKey(KEY_A))x -= 0.005;
+	    if(window->getKey(KEY_D))x += 0.005;
+
+	    camera->setPosition(x, 30, y);
 
 		root->renderOneFrame();
 	}
